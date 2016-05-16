@@ -1,11 +1,20 @@
-{% load i18n %}
+{% load i18n sekizai_tags staticfiles %}
 
-{# submission of this form will forward to "includes/search_results.html" #}
-{# this form can also be submitted using ajax and "includes/search_results.html" is returned #}
-<form action="{{ query_url }}" method="get">
-    <label for="search-plugin-{{ instance.pk }}">{% trans "Keyword search" %}</label>
-    <input type="text" name="q" id="search-plugin-{{ instance.pk }}" placeholder="{% trans 'Keyword' %}">
+<div class="aldryn aldryn-newsblog aldryn-newsblog-article-search js-aldryn-newsblog-article-search">
+    <form action="{{ query_url }}" class="form-inline" method="get">
+        {% csrf_token %}
+        <input type="hidden" name="max_articles" value="{{ instance.max_articles }}">
+        <div class="input-group">
+            <label for="field-{{ instance.pk }}-keyword" class="sr-only">{% trans "Keyword search" %}</label>
+            <input type="text" name="q" class="form-control" id="field-{{ instance.pk }}-keyword" placeholder="{% trans 'Keyword' %}"{% if query_url == None %} disabled{% endif %}>
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary"{% if query_url == None %} disabled{% endif %}>{% trans "Go" %}</button>
+            </span>
+        </div>
+    </form>
 
-    <input type="hidden" name="max_articles" value="{{ instance.max_articles }}">
-    <button type="submit">{% trans "Go" %}</button>
-</form>
+    <div class="search-results js-search-results"></div>
+</div>
+
+{% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/aldryn-newsblog/article.css' %}">{% endaddtoblock %}
+{% addtoblock "js" %}<script src="{% static 'js/addons/cl.newsblog.js' %}"></script>{% endaddtoblock %}
